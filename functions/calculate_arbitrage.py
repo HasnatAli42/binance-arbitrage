@@ -1,31 +1,56 @@
+import string
+
 from Models.model_calculation_data import CalculationDataModel
 from Models.model_profit_calculation import ProfitModel
-from functions.price_conversions import convert_usd_to_btc, convert_btc_to_token
+from functions.calculate_percentage import calculate_percentages
+from functions.price_conversions import convert_usd_to_btc, convert_btc_to_token, convert_token_to_eth, \
+    convert_eth_to_usd, convert_btc_to_usd
 
 
 def calculate_arbitrage(raw_data: list[CalculationDataModel]):
     calculated_results = []
+    # index = 0
     for data in raw_data:
+        # if index != 100:
         calculate_obj = ProfitModel()
         calculate_obj.symbol = data.symbol_BTC_TOKEN
+        calculate_obj.current_USD = float(data.initial_USD)
         calculate_obj.initial_USD = float(data.initial_USD)
-
+        # print_calc(statement="Values Before Calculation", calculate_obj=calculate_obj)
         # Convert USD To BTC
         calculate_obj.current_USD, calculate_obj.current_BTC = convert_usd_to_btc(USD_used=data.initial_USD,
                                                                                   price=data.price_BTC_USD)
-        print("currentUSD=", calculate_obj.current_USD, "currentBTC=", calculate_obj.current_BTC)
-
+        # print_calc(statement="Convert USD To BTC", calculate_obj=calculate_obj)
         # Convert BTC To TOKEN
-        calculate_obj.current_BTC, calculate_obj.current_TOKEN = convert_btc_to_token(BTC_used=calculate_obj.current_BTC,
-                                                                                      price=data.price_BTC_TOKEN)
-        print(data.price_BTC_TOKEN, "currentToken=", calculate_obj.current_TOKEN, "currentBTC=", calculate_obj.current_BTC)
-
-    #     print("Sym=", data.symbol_BTC_USD, "Price=", data.price_BTC_USD,
-    #           "Sym=", data.symbol_BTC_TOKEN, "Price=", data.price_BTC_TOKEN,
-    #           "Sym=", data.symbol_ETH_TOKEN, "Price=", data.price_ETH_TOKEN,
-    #           "Sym=", data.symbol_ETH_BTC, "Price=", data.price_ETH_BTC,
-    #           "Sym=", data.symbol_ETH_USD, "Price=", data.price_ETH_USD, )
-    # print(len(raw_data))
+        calculate_obj.current_BTC, calculate_obj.current_TOKEN = convert_btc_to_token(
+            BTC_used=calculate_obj.current_BTC
+            , price=data.price_BTC_TOKEN)
+        # print_calc(statement="Convert BTC To TOKEN", calculate_obj=calculate_obj)
+        # Convert TOKEN to ETH
+        calculate_obj.current_ETH, calculate_obj.current_TOKEN = convert_token_to_eth(TOKEN_used=
+                                                                                      calculate_obj.current_TOKEN
+                                                                                      , price=data.price_ETH_TOKEN)
+        # print_calc(statement="Convert TOKEN to ETH", calculate_obj=calculate_obj)
+        # Convert ETH to USD
+        calculate_obj.current_USD, calculate_obj.current_ETH = convert_eth_to_usd(ETH_used=calculate_obj.current_ETH
+                                                                                  ,
+                                                                                  USD_avail=calculate_obj.current_USD
+                                                                                  , price=data.price_ETH_USD)
+        # print_calc(statement="Convert ETH to USD", calculate_obj=calculate_obj)
+        # Convert Remaining BTC to USD
+        calculate_obj.current_USD, calculate_obj.current_BTC = convert_btc_to_usd(BTC_avail=
+                                                                                  calculate_obj.current_BTC,
+                                                                                  USD_avail=
+                                                                                  calculate_obj.current_USD,
+                                                                                  price=data.price_BTC_USD)
+        # print_calc(statement="Convert Remaining BTC to USD", calculate_obj=calculate_obj)
+        calculate_obj.final_USD = calculate_obj.current_USD
+        calculate_obj.gross_increase_USD, calculate_obj.net_increase_USD, \
+        calculate_obj.gross_increase_percent, calculate_obj.net_increase_percent = calculate_percentages(
+            initial=calculate_obj.initial_USD, final=calculate_obj.final_USD)
+        calculated_results.append(calculate_obj)
+        # index += 1
+    return calculated_results
 
 
 def calculate_arbitrage_data(pairs_BTC, pairs_ETH, pairs_USD, USD_Provided):
@@ -76,3 +101,9 @@ def remove_uncommon_pairs(required_pairs: list):
                     reduced_pairs.append(pair)
                     pairs_ETH.append(pair)
     return reduced_pairs, pairs_BTC, pairs_ETH, pairs_USD
+
+
+def print_calc(statement: string, calculate_obj: ProfitModel):
+    print(statement)
+    print("USD = " + str(calculate_obj.current_USD) + " BTC = " + str(calculate_obj.current_BTC)
+          + " TOKEN = " + str(calculate_obj.current_TOKEN) + " ETH = " + str(calculate_obj.current_ETH))
