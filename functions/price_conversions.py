@@ -2,22 +2,22 @@ from settings.settings import decimals_btc, decimals_usd
 
 
 def convert_usd_to_btc(USD_used: float, price: float):
-    raw_btc = USD_used / price
+    raw_btc = float(USD_used / price)
     processed_btc = float(int(raw_btc * decimals_btc)) / decimals_btc
-    remaining_usd = float(float(raw_btc * decimals_btc) - float(int(raw_btc * decimals_btc))) / decimals_btc
-    remaining_usd = (int(remaining_usd * decimals_usd)) / decimals_usd
+    remaining_usd = float(int((raw_btc - processed_btc) * price * decimals_btc))/ decimals_btc
     return remaining_usd, processed_btc
 
 
 def convert_btc_to_token(BTC_used: float, price: float):
-    token, btc = divmod(BTC_used, price)
-    btc = float(int(btc * decimals_btc)) / decimals_btc
+    token = int(BTC_used / price)
+    btc = float((BTC_used / price)-token) * price
     return float(btc), float(token)
 
 
 def convert_token_to_eth(TOKEN_used: float, price: float):
     eth = TOKEN_used * price
-    return float(eth), float(0)
+    token = (TOKEN_used * price) - eth
+    return float(eth), float(token)
 
 
 def convert_eth_to_usd(ETH_used: float, USD_avail: float, price: float):

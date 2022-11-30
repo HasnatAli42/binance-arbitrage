@@ -10,8 +10,12 @@ from settings.settings import Dollar
 def arbitrage():
     while True:
 
+        total_tickers = []
         # Get Data
-        total_tickers = client.get_ticker()
+        try:
+            total_tickers = client.get_ticker()
+        except Exception as e:
+            print("Api Exception ", e)
 
         # Reduce Data
         total_tickers = get_ticker_mapper(response=total_tickers)
