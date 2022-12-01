@@ -13,4 +13,6 @@ class ProfitModel:
         self.net_increase_percent = ""
         self.current_commission = ""
         self.total_commission = ""
+        self.from_btc = False
+        self.from_eth = False
 
