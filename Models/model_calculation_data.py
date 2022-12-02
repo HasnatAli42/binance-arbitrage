@@ -1,4 +1,4 @@
-class CalculationDataModel:
+class OrderDataModel:
     def __init__(self):
         self.symbol_BTC_USD = ""
         self.symbol_BTC_TOKEN = ""
@@ -11,5 +11,11 @@ class CalculationDataModel:
         self.price_ETH_BTC = 0.0
         self.price_ETH_USD = 0.0
         self.initial_USD = ""
+        self.qty_btc_from_usd = 0.0
+        self.qty_eth_from_usd = 0.0
+        self.qty_token_from_btc = 0.0
+        self.qty_token_from_eth = 0.0
+        self.qty_btc_from_token = 0.0
+        self.qty_eth_from_token = 0.0
 
 

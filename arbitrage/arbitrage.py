@@ -1,13 +1,14 @@
 import time
 import json
 
-from Models.model_calculation_data import CalculationDataModel
+from Models.model_calculation_data import OrderDataModel
+from Models.model_get_exchange_info import ExchangeInfoModel
 from Models.model_get_ticker import get_ticker_mapper
 from Models.model_order_market import MarketOrderModel
 from Models.model_profit_calculation import ProfitModel
 from binance_dir.client import client
 from functions.calculate_arbitrage import remove_uncommon_pairs, calculate_arbitrage_data, calculate_arbitrage
-from functions.orders import place_order_usd_to_btc
+from functions.orders import place_order_usd_to_btc, place_order_btc_to_token
 from functions.required_data import required_data
 from functions.sort_calculations import sort_calculated_data
 from settings.settings import Dollar
@@ -16,8 +17,10 @@ from settings.settings import Dollar
 def arbitrage():
     while True:
         analysis_data = ProfitModel()
-        order_execution_data = CalculationDataModel()
+        order_execution_data = OrderDataModel()
         first_order = MarketOrderModel()
+        second_order = MarketOrderModel()
+        symbol_info = ExchangeInfoModel()
         total_tickers = []
         # Get Data
         try:
@@ -41,7 +44,11 @@ def arbitrage():
         analysis_data, order_execution_data = required_data(analysis_data=sorted_data, execution_data=raw_data)
         print("Required Analysiss Data", json.dumps(analysis_data.__dict__))
         print("Required Execution Data", json.dumps(order_execution_data.__dict__))
-        # first_order = place_order_usd_to_btc(analysis_data=analysis_data, order_data=order_execution_data)
-        # print(first_order)
+        print(client.get_symbol_info(symbol="JASMYBTC"))
+        first_order = place_order_usd_to_btc(analysis_data=analysis_data, order_data=order_execution_data)
+        print(first_order)
+        second_order = place_order_btc_to_token(analysis_data=analysis_data,
+                                                order_data=order_execution_data, pre_order=first_order)
+        print(second_order)
 
         time.sleep(2)

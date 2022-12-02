@@ -1,8 +1,8 @@
-from Models.model_calculation_data import CalculationDataModel
+from Models.model_calculation_data import OrderDataModel
 from Models.model_profit_calculation import ProfitModel
 
 
-def required_data(analysis_data: list[ProfitModel], execution_data: list[CalculationDataModel]):
+def required_data(analysis_data: list[ProfitModel], execution_data: list[OrderDataModel]):
     if abs(analysis_data[0].net_increase_percent) > abs(analysis_data[-1].net_increase_percent):
         analysis_data = analysis_data[0]
         analysis_data.from_btc = True

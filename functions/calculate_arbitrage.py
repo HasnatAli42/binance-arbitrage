@@ -1,13 +1,13 @@
 import string
 
-from Models.model_calculation_data import CalculationDataModel
+from Models.model_calculation_data import OrderDataModel
 from Models.model_profit_calculation import ProfitModel
 from functions.calculate_percentage import calculate_percentages
 from functions.price_conversions import convert_usd_to_btc, convert_btc_to_token, convert_token_to_eth, \
     convert_eth_to_usd, convert_btc_to_usd
 
 
-def calculate_arbitrage(raw_data: list[CalculationDataModel]):
+def calculate_arbitrage(raw_data: list[OrderDataModel]):
     calculated_results = []
     # index = 0
     for data in raw_data:
@@ -56,7 +56,7 @@ def calculate_arbitrage(raw_data: list[CalculationDataModel]):
 def calculate_arbitrage_data(pairs_BTC, pairs_ETH, pairs_USD, USD_Provided):
     calculated_results = []
     for pair in pairs_BTC:
-        calculate_obj = CalculationDataModel()
+        calculate_obj = OrderDataModel()
         calculate_obj.symbol_BTC_TOKEN = pair.symbol
         calculate_obj.price_BTC_TOKEN = float(pair.lastPrice)
         for stable_pair in pairs_USD:
