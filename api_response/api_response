@@ -1,0 +1,8 @@
+Eth Buy Market Order:
+{'symbol': 'ETHBUSD', 'orderId': 6380796437, 'orderListId': -1,
+ 'clientOrderId': '9xXKShUfjUxNQg6BMoBxul', 'transactTime': 1669970388976,
+  'price': '0.00000000', 'origQty': '0.01170000', 'executedQty': '0.01170000',
+  'cummulativeQuoteQty': '14.93586900', 'status': 'FILLED', 'timeInForce': 'GTC',
+  'type': 'MARKET', 'side': 'BUY',
+  'fills': [{'price': '1276.57000000', 'qty': '0.01170000',
+  'commission': '0.00003870', 'commissionAsset': 'BNB', 'tradeId': 433814791}]}
