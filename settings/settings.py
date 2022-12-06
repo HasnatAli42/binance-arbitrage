@@ -1,4 +1,4 @@
-Dollar = 15
+Dollar = 13
 TIME_SLEEP = 2
 decimals_btc = 100000000
 decimals_usd = 10000000

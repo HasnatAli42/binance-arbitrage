@@ -1,3 +1,4 @@
+import json
 import string
 
 from Models.model_calculation_data import OrderDataModel
@@ -90,18 +91,26 @@ def remove_uncommon_pairs(required_pairs: list):
         if pair.symbol == "ETHBTC" or pair.symbol == "ETHBUSD" or pair.symbol == "BTCBUSD":
             reduced_pairs.append(pair)
             pairs_USD.append(pair)
-        elif pair.symbol[-3:] == "BTC":
+        elif pair.symbol[-3:] == "BTC" and float(pair.lastPrice) > 0.00000500:
             for other_pair in required_pairs:
                 if other_pair.symbol == pair.symbol[0:-3] + "ETH":
                     reduced_pairs.append(pair)
                     pairs_BTC.append(pair)
-        elif pair.symbol[-3:] == "ETH":
+        elif pair.symbol[-3:] == "ETH" and float(pair.lastPrice) > 0.00006800:
             for other_pair in required_pairs:
                 if other_pair.symbol == pair.symbol[0:-3] + "BTC":
                     reduced_pairs.append(pair)
                     pairs_ETH.append(pair)
     return reduced_pairs, pairs_BTC, pairs_ETH, pairs_USD
 
+
+def remove_low_priced_tokens(raw_data: list[OrderDataModel]):
+    next_raw_data = [OrderDataModel]
+    for data in raw_data:
+        # print(json.dumps(data.__dict__))
+        if float(data.price_BTC_TOKEN) > 0.00001:
+            next_raw_data.append(data)
+    return next_raw_data
 
 def print_calc(statement: string, calculate_obj: ProfitModel):
     print(statement)
